@@ -4,19 +4,100 @@
 package pubsub_to_bigquery;
 
 import org.apache.beam.sdk.Pipeline;
+
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
 import org.apache.beam.sdk.options.PipelineOptions;
+import org.apache.beam.sdk.options.Description;
+import org.apache.beam.sdk.options.Default;
+
+import org.apache.beam.sdk.io.gcp.pubsub.PubsubIO;
+
+import org.apache.beam.sdk.transforms.DoFn;
+import org.apache.beam.sdk.transforms.ParDo;
+
+import org.apache.beam.sdk.values.PCollection;
+import org.apache.beam.sdk.values.PCollectionTuple;
+
+import org.apache.beam.runners.dataflow.options.DataflowPipelineOptions;
+import org.apache.beam.runners.direct.DirectOptions;
+
+import static pubsub_to_bigquery.TransformToBQ.SUCCESS_TAG;
+import static pubsub_to_bigquery.TransformToBQ.FAILURE_TAG;
 
 public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
+
+	public interface MyOptions extends DataflowPipelineOptions, DirectOptions {
+    @Description("BigQuery project")
+    @Default.String("my_bq_project")
+    String getBQProject();
+
+    void setBQProject(String value);
+
+    @Description("BigQuery dataset")
+    @Default.String("my_bq_dataset")
+    String getBQDataset();
+
+    void setBQDataset(String value);
+
+    @Description("Bucket path to collect pipeline errors in json files")
+    @Default.String("errors")
+
+    String getErrorsBucket();
+    void setErrorsBucket(String value);
+
+    @Description("Bucket path to collect pipeline errors in json files")
+    @Default.String("bi_pipeline_dev")
+    String getBucket();
+
+    void setBucket(String value);
+
+    @Description("Pubsub project")
+    @Default.String("my_pubsub_project")
+    String getPubSubProject();
+
+    void setPubSubProject(String value);
+
+    @Description("Pubsub subscription")
+    @Default.String("my_pubsub_subscription")
+    String getSubscription();
+
+    void setSubscription(String value);
+  }
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
 
-        PipelineOptions options = PipelineOptionsFactory.create();
+        PipelineOptionsFactory.register(MyOptions.class);
+  		MyOptions options = PipelineOptionsFactory.fromArgs(args)
+                                                  .withValidation()
+                                                  .as(MyOptions.class);
         Pipeline p = Pipeline.create(options);
+
+        final String PROJECT = options.getProject();
+        final String ERRORS_BUCKET = String.format("gs://%s/%s/", options.getBucket(), options.getErrorsBucket());
+        final String SUBSCRIPTION = String.format("projects/%s/subscriptions/%s", options.getPubSubProject(), options.getSubscription());
+        final int STORAGE_LOAD_INTERVAL = 5; //5 minutes
+        final int STORAGE_NUM_SHARDS = 1;
+
+        final String BQ_PROJECT = options.getBQProject();
+        final String BQ_DATASET = options.getBQDataset();
+
+        System.out.println(options);
+
+        PCollection<String> pubsubMessages = p
+                .apply("ReadPubSubSubscription", PubsubIO.<String>readStrings().fromSubscription(SUBSCRIPTION));
+
+        pubsubMessages.apply("PrintElements", ParDo.of(new DoFn<String, Void>() {
+            @ProcessElement
+            public void processElement(ProcessContext c)  {
+                System.out.println(c.element());
+            }
+        }));
+
+        PCollectionTuple results = pubsubMessages.apply("TransformToBQ", TransformToBQ.run());
+
+
+        p.run();
+
 
     }
 }

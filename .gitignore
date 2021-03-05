@@ -4,3 +4,5 @@ build
 # Compiled Java class files
 *.class
 .DS_Store
+
+.json

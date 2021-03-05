@@ -1,0 +1,19 @@
+download project
+
+./gradlew build
+
+
+PROJECT="bi-collection-dev"
+BQ_PROJECT="bi-analysis-dev"
+BQ_DATASET="analytics"
+PUBSUB_PROJECT="bi-collection-dev"
+SUBSCRIBTION="bi_subscription"
+REGION="us-central1"
+BUCKET="bi_pipeline_dev"
+SA_FILE="$PWD/../../bi-collection-dev.json"
+SA_ACCOUNT="dataflow-bi@bi-collection-dev.iam.gserviceaccount.com"
+JOB_NAME="dataflow-bi"
+MAX_WORKERS=1
+STREAMING=true
+
+./gradlew clean run -Pargs="--runner=DirectRunner --project=$DATAFLOW_PROJECT  --project=$PROJECT --BQProject=$BQ_PROJECT --BQDataset=$BQ_DATASET --pubSubProject=$PUBSUB_PROJECT --subscription=$PUBSUB_SUBSCRIBTION --tempLocation=$TEMP_LOCATION --stagingLocation=$STAGING_LOCATION --region=$REGION --enableStreamingEngine --numWorkers=1 --jobName=$JOB_NAME --usePublicIps=false --maxNumWorkers=$MAX_WORKERS --autoscalingAlgorithm=THROUGHPUT_BASED --bucket=$BUCKET --serviceAccount=$SA_ACCOUNT --streaming=true --workerMachineType=$WORKER_MACHINE_TYPE"
