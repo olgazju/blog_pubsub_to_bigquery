@@ -1,0 +1,13 @@
+{
+  "id": 654321,
+  "name": "Adalira Ortiz",
+  "label": false,
+  "address": {
+    "country": "Spain",
+    "town": "Barcelona",
+    "street": "Diagonal",
+    "number": 16
+  },
+  "subids": [],
+  "table": "people"
+}

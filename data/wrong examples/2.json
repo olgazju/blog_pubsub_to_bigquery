@@ -1,0 +1,15 @@
+{
+  "id": 123456,
+  "name": 152512,
+  "label": true,
+  "address": {
+    "country": "Spain",
+    "town": "Barcelona",
+    "street": "La Rambla",
+    "number": 2
+  },
+  "subids": [
+    555
+  ],
+  "table": "people"
+}

@@ -1,0 +1,17 @@
+{
+  "id": 123456,
+  "name": "Peter Peterson",
+  "label": true,
+  "address": {
+    "country": "Sweden",
+    "town": "Boden",
+    "street": "Aspgatan",
+    "number": 2
+  },
+  "subids": [
+    111,
+    112,
+    113
+  ],
+  "table": "people"
+}

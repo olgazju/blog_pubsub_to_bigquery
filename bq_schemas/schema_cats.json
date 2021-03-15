@@ -1,0 +1,23 @@
+
+[
+  {
+    "mode": "NULLABLE",
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "name",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "breed",
+    "type": "STRING"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "ownerids",
+    "type": "INTEGER"
+  }
+]

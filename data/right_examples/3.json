@@ -1,0 +1,7 @@
+{
+  "id": 1232,
+  "name": "Lucy",
+  "breed": "British Shorthair",
+  "ownerids": [654321],
+  "table": "cats"
+}

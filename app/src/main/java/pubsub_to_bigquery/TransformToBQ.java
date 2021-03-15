@@ -44,9 +44,6 @@ public class TransformToBQ {
     private static class JsonToTableRow
             extends PTransform<PCollection<String>, PCollectionTuple> {
 
-        /** exclude them from serialization process and being stored in main memory */
-        //private transient volatile @Nullable
-        //ObjectMapper objectMapper;
 
         @Override
         public PCollectionTuple expand(PCollection<String> jsonStrings) {
@@ -56,12 +53,22 @@ public class TransformToBQ {
                         public void processElement(ProcessContext context) {
                             String jsonString = context.element();
                             System.out.println("processElement");
+
+                            byte[] message_in_bytes = jsonString.getBytes(StandardCharsets.UTF_8);
+
+                            // checking message size if it's not more than 5 Mb for POST body
+                            if (message_in_bytes.length >= 5 * 1024 * 1024) {
+                                System.out.printf("Error: too big row of %d bytes\n", message_in_bytes.length);
+                                context.output(FAILURE_TAG, KV.of("TooBigRow", jsonString));
+                            }
+
                             TableRow row;
                             // Parse the JSON into a {@link TableRow} object.
-                            try (InputStream inputStream =
-                                new ByteArrayInputStream(jsonString.getBytes(StandardCharsets.UTF_8))) {
+                            try (InputStream inputStream = new ByteArrayInputStream(message_in_bytes)) 
+                            {
                                 row = TableRowJsonCoder.of().decode(inputStream, Context.OUTER);
                                 context.output(row);
+
                              } catch (IOException e) {
                                 //throw new RuntimeException("Failed to serialize json to table row: " + json, e);
                                 context.output(FAILURE_TAG, KV.of("JsonParseError", jsonString));

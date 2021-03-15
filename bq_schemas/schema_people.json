@@ -1,0 +1,49 @@
+
+[
+  {
+    "mode": "NULLABLE",
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "name",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "label",
+    "type": "BOOLEAN"
+  },
+  {
+      "fields": [
+        {
+          "mode": "NULLABLE",
+          "name": "country",
+          "type": "STRING"
+        },
+        {
+          "mode": "NULLABLE",
+          "name": "town",
+          "type": "STRING"
+        },
+        {
+          "mode": "NULLABLE",
+          "name": "street",
+          "type": "STRING"
+        },
+        {
+          "mode": "NULLABLE",
+          "name": "number",
+          "type": "INTEGER"
+        }
+    ],
+    "mode": "NULLABLE",
+    "name": "address",
+    "type": "RECORD"
+  },
+  {"mode": "REPEATED",
+   "name": "subids",
+   "type": "INTEGER"
+  }
+]
